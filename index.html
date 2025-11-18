@@ -1,1 +1,49 @@
-<h1>Hello GitHub Pages!</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>YouTube Relay</title>
+    <style>
+        /* Ensures the player fills the entire iframe window */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+        #player { width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <div id="player"></div>
+    <script>
+        // 1. Get the video ID from the URL query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoId = urlParams.get('videoId');
+
+        // 2. Ensure the YouTube IFrame API script is loaded
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // 3. The API will call this function when it's ready
+        var player;
+        function onYouTubeIframeAPIReady() {
+            // Note: The player is created on the relay page's origin (https://yourdomain.com),
+            // which satisfies YouTube's security requirements.
+            player = new YT.Player('player', {
+                videoId: videoId,
+                playerVars: {
+                    'rel': 0, // Disable related videos
+                    'autoplay': 1, // Optional: Start playing immediately
+                    // *** You DO NOT need to set the 'origin' parameter here! ***
+                    // The origin is automatically determined as the host of this page.
+                },
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+        function onPlayerReady(event) {
+            // Optional: Start playback if 'autoplay' failed
+            // event.target.playVideo();
+        }
+    </script>
+</body>
+</html>
